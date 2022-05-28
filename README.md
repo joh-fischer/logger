@@ -12,3 +12,8 @@ logger.log_hparams({'lr': 1e-4})
 
 logger.save()
 ```
+
+## Todo
+
+- log metrics with dict and arrays (without step), just appending
+- save function with csv writer
