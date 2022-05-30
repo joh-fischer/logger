@@ -16,4 +16,7 @@ logger.save()
 ## Todo
 
 - log metrics with dict and arrays (without step), just appending
+- maybe logger.newEpoch() function to start new epoch
+- always use epoch and step, s.t. it is stored per epoch, per step
 - save function with csv writer
+- load history from csv
