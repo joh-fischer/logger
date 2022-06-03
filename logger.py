@@ -8,7 +8,7 @@ import torch
 class Logger:
     def __init__(self, log_dir: str, name: str = None, include_time: bool = False):
         self.name = name if name else ''
-        self.time = datetime.now().strftime('%y-%m-%d_%H%M%S') if include_time else ''
+        self.time = datetime.now().strftime('_%y-%m-%d_%H%M%S') if include_time else ''
 
         self.metrics = []
         self.hparams = {}

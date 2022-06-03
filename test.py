@@ -15,6 +15,7 @@ for epoch in range(epochs):
         logger.log_metrics({'val_acc': 2 * epoch}, step)
 
 print("Length of metrics:", len(logger.metrics))
+print(logger.metrics)
 print(logger.hparams)
 logger.save()
 print(pd.read_csv('./logs/metrics.csv').head(20))
