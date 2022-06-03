@@ -20,3 +20,4 @@ logger.save()
 - always use epoch and step, s.t. it is stored per epoch, per step
 - save function with csv writer
 - load history from csv
+- https://github.com/fyu/pytorch_examples/blob/master/imagenet/main.py AverageMeter class
