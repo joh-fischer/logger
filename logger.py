@@ -2,15 +2,18 @@ import yaml
 from datetime import datetime
 import csv
 import os
+import torch
 
 
 class Logger:
     def __init__(self, log_dir: str, name: str = None, include_time: bool = False):
-        self.name = name if name else 'log'
+        self.name = name if name else ''
         self.time = datetime.now().strftime('%y-%m-%d_%H%M%S') if include_time else ''
 
         self.metrics = []
         self.hparams = {}
+
+        self.running_epoch = -1
 
         self.log_dir = log_dir
         if not os.path.exists(self.log_dir):
@@ -23,7 +26,8 @@ class Logger:
         Parameters
         ----------
         params : dict
-            Dictionary containing the hyper-parameters as key-value pairs. For example {'optimizer': 'Adam', 'lr': 1e-02}.
+            Dictionary containing the hyperparameters as key-value pairs.
+            For example {'optimizer': 'Adam', 'lr': 1e-02}.
         """
         self.hparams.update(params)
 
@@ -38,18 +42,34 @@ class Logger:
         step : int, optional
             Step number where metrics are to be recorded.
         """
-        step = step if step else len(self.metrics)
+        step = step if step is not None else len(self.metrics)
 
-        metrics = {k: self._handle_value(v) for k, v in metrics_dict.items()}
+        metrics = {'epoch': self.running_epoch}
+        metrics.update({k: self._handle_value(v) for k, v in metrics_dict.items()})
         metrics['step'] = step
+
         self.metrics.append(metrics)
+
+    def init_epoch(self, epoch: int = None):
+        """
+        Sets the `self.running_epoch` to `epoch`. If `epoch` not given, it increases `self.running_epoch` by 1.
+
+        Parameters
+        ----------
+        epoch : int
+            If not given, it will be last epoch + 1.
+        """
+        if epoch:
+            self.running_epoch = epoch
+        else:
+            self.running_epoch += 1
 
     def save(self):
         """
-        Save the hyper-parameters and metrics to a file.
+        Save the hyperparameters and metrics to a file.
         """
         if self.metrics:
-            metrics_file_path = os.path.join(self.log_dir, self.name + self.time + '.csv')
+            metrics_file_path = os.path.join(self.log_dir, 'metrics' + self.name + self.time + '.csv')
             last_m = {}
             for m in self.metrics:
                 last_m.update(m)
@@ -61,15 +81,14 @@ class Logger:
                 writer.writerows(self.metrics)
 
         if self.hparams:
-            hparams_file_path = os.path.join(self.log_dir, self.name + self.time + '.yaml')
+            hparams_file_path = os.path.join(self.log_dir, 'hparams' + self.name + self.time + '.yaml')
 
-            output = yaml.dump(self.hparams, Dumper=yaml.CDumper)
+            output = yaml.dump(self.hparams, Dumper=yaml.Dumper)
             with open(hparams_file_path, 'w') as file:
                 file.write(output)
 
-
     @staticmethod
     def _handle_value(value):
-        #if isinstance(value, torch.Tensor):
-        #    return value.item()
+        if isinstance(value, torch.Tensor):
+            return value.item()
         return value

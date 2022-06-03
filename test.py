@@ -3,12 +3,18 @@ import pandas as pd
 
 logger = Logger('./logs')
 logger.log_hparams({'lr': 1e-4, 'optim': 'Adam'})
-for i in range(10):
-    logger.log_metrics({'acc': i}, i)
-    if i % 2 == 0:
-        logger.log_metrics({'val_acc': i*10}, i)
 
-print(logger.metrics)
+epochs = 2
+
+for epoch in range(epochs):
+    logger.init_epoch()
+    for step in range(4):
+        logger.log_metrics({'loss': epoch*step*2, 'acc': epoch*step*2}, step)
+
+    for step in range(2):
+        logger.log_metrics({'val_acc': 2 * epoch}, step)
+
+print("Length of metrics:", len(logger.metrics))
 print(logger.hparams)
-print(pd.read_csv('./logs/log.csv').head(5)
 logger.save()
+print(pd.read_csv('./logs/metrics.csv').head(20))
