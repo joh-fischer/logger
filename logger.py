@@ -15,6 +15,8 @@ class Logger:
 
         self.running_epoch = -1
 
+        self.current_epoch_metrics = []
+
         self.log_dir = log_dir
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir, exist_ok=True)
@@ -50,6 +52,8 @@ class Logger:
 
         self.metrics.append(metrics)
 
+        self.current_epoch_metrics.append(metrics)
+
     def init_epoch(self, epoch: int = None):
         """
         Sets the `self.running_epoch` to `epoch`. If `epoch` not given, it increases `self.running_epoch` by 1.
@@ -63,6 +67,8 @@ class Logger:
             self.running_epoch = epoch
         else:
             self.running_epoch += 1
+
+        self.current_epoch_metrics = []
 
     def save(self):
         """
