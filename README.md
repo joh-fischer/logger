@@ -1,4 +1,4 @@
-# Custom Multipurpose CSV Logger
+# Custom CSV Logger
 
 ## Usage
 
@@ -15,9 +15,11 @@ logger.save()
 
 ## Todo
 - get last <name>
-- log metrics with dict and arrays (without step), just appending
-- maybe logger.newEpoch() function to start new epoch
-- always use epoch and step, s.t. it is stored per epoch, per step
-- save function with csv writer
 - load history from csv
 - https://github.com/fyu/pytorch_examples/blob/master/imagenet/main.py AverageMeter class
+- copyright issues
+
+## Ideas
+
+Make a `AverageMeter()` per logged value per epoch and make it accessible via dot indexing. E.g.
+`logger.epoch_summary['acc'].avg`.
