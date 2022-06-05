@@ -14,15 +14,10 @@ logger.save()
 ```
 
 ## Todo
-- include .epoch property
-  - dictionary with aggregator
-  - AverageMeter
-  - log metrics with aggregate=True
-- phase keyword ('train', 'val', ...)
 - integrate tensorboard
-- load history from csv
 - https://github.com/fyu/pytorch_examples/blob/master/imagenet/main.py AverageMeter class
 - copyright issues
+- `setup.py` and packaging
 
 ## Ideas
 
