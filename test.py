@@ -12,10 +12,10 @@ t0 = time.time()
 for epoch in range(epochs):
     logger.init_epoch()
     for step in range(3):
-        logger.log_metrics({'loss': epoch*step*2, 'acc': epoch*step*2}, step)
+        logger.log_metrics({'loss': epoch*step*2, 'acc': epoch*step*2}, phase='train')
 
-    for step in range(1):
-        logger.log_metrics({'val_acc': 2 * epoch}, step)
+    for step in range(2):
+        logger.log_metrics({'val_acc': 2 * epoch}, phase='val')
 
 print("Time:", time.time() - t0)
 

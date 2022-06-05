@@ -5,6 +5,21 @@ import os
 import torch
 
 
+class Aggregator:
+    def __init__(self):
+        """
+        Aggregate values via sum and average.
+        """
+        self.sum = 0
+        self.avg = 0
+        self.count = 0
+
+    def update(self, val: float, n: int = 1):
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
+
+
 class Logger:
     def __init__(self, log_dir: str, name: str = None, include_time: bool = False):
         self.name = name if name else ''
@@ -15,7 +30,7 @@ class Logger:
 
         self.running_epoch = -1
 
-        self.current_epoch_metrics = []
+        self.epoch = {}
 
         self.log_dir = log_dir
         if not os.path.exists(self.log_dir):
@@ -33,7 +48,7 @@ class Logger:
         """
         self.hparams.update(params)
 
-    def log_metrics(self, metrics_dict: dict, step: int = None):
+    def log_metrics(self, metrics_dict: dict, step: int = None, phase: str = ''):
         """
         Log metrics.
 
@@ -43,16 +58,18 @@ class Logger:
             Dictionary containing the metrics as key-value pairs. For example {'acc': 0.9, 'loss': 0.2}.
         step : int, optional
             Step number where metrics are to be recorded.
+        phase : str
+            Current phase, e.g. 'train' or 'val' or 'epoch_end'.
         """
         step = step if step is not None else len(self.metrics)
 
-        metrics = {'epoch': self.running_epoch}
+        metrics = {'epoch': self.running_epoch, 'phase': phase}
         metrics.update({k: self._handle_value(v) for k, v in metrics_dict.items()})
         metrics['step'] = step
 
         self.metrics.append(metrics)
 
-        self.current_epoch_metrics.append(metrics)
+        #self.epoch
 
     def init_epoch(self, epoch: int = None):
         """
@@ -68,7 +85,7 @@ class Logger:
         else:
             self.running_epoch += 1
 
-        self.current_epoch_metrics = []
+        self.epoch = {}
 
     def save(self):
         """
