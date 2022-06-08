@@ -3,7 +3,7 @@
 ## Usage
 
 ```python
-from logger import Logger
+from logger.logger import Logger
 
 logger = Logger('./logs')
 
@@ -14,10 +14,11 @@ logger.save()
 ```
 
 ## Todo
-- get last <name>
-- load history from csv
+- integrate tensorboard
 - https://github.com/fyu/pytorch_examples/blob/master/imagenet/main.py AverageMeter class
 - copyright issues
+- `setup.py` and packaging
+- set phase with logger.set_phase() ?
 
 ## Ideas
 
