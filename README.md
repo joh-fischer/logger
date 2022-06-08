@@ -10,11 +10,11 @@ logger = Logger('./logs')
 
 logger.log_hparams({'lr': 1e-4, 'optimizer': 'Adam'})
 
-for epoch in range(4):
+for epoch in range(2):
     logger.init_epoch()
     
     # training simulation
-    for step in range(10):
+    for step in range(4):
         logger.log_metrics({'loss': np.random.rand(), 'acc': np.random.rand()},
                            phase='train', aggregate=True)
         
