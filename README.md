@@ -15,14 +15,16 @@ for epoch in range(4):
     
     # training simulation
     for step in range(10):
-        logger.log_metrics({'loss': np.random.rand(), 'acc': np.random.rand()}, phase='train', aggregate=True)
+        logger.log_metrics({'loss': np.random.rand(), 'acc': np.random.rand()},
+                           phase='train', aggregate=True)
         
     print("Average:", logger.epoch['loss'].avg)
     print("Sum:", logger.epoch['loss'].sum)
     
     # validation simulation
     for step in range(2):
-        logger.log_metrics({'val_loss': np.random.rand()}, phase='val', aggregate=True)
+        logger.log_metrics({'val_loss': np.random.rand()},
+                           phase='val', aggregate=True)
         
         print('Running average:', logger.epoch['val_loss'].avg)
 
