@@ -51,6 +51,7 @@ The output of the `logs/metrics.csv` file will look like this
 ## Todo
 - model name is folder not filename
 - `__init__` docstring
+- summary file writer
 - integrate tensorboard
 - copyright issues
 - `setup.py` and packaging
