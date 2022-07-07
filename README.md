@@ -4,18 +4,21 @@
 
 ```python
 from logger import Logger
-import numpy as np
+import torch
 
-logger = Logger('./logs')
+experiment_name = 'model1'
+
+logger = Logger('./logs', experiment_name,      # creates the folder `./logs/model1`
+                tensorboard=True)               # instantiates a tensorboard SummaryWriter      
 
 logger.log_hparams({'lr': 1e-4, 'optimizer': 'Adam'})
 
 for epoch in range(2):
-    logger.init_epoch()
+    logger.init_epoch(epoch)        # initializes an epoch to aggregate values
 
-    # training simulation
+    # training
     for step in range(4):
-        logger.log_metrics({'loss': np.random.rand(), 'acc': np.random.rand()},
+        logger.log_metrics({'loss': torch.randn(1), 'acc': torch.rand(1)},
                            phase='train', aggregate=True)
 
     print("Average:", logger.epoch['loss'].avg)

@@ -1,8 +1,9 @@
 import yaml
-from datetime import datetime
 import csv
 import os
+
 import torch
+from torch.utils.tensorboard import SummaryWriter
 
 
 class Aggregator:
@@ -20,10 +21,35 @@ class Aggregator:
         self.avg = self.sum / self.count
 
 
+class Dummy:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __getattr__(self, item):
+        def func(*args, **kwargs):
+            pass
+        return func
+
+
 class Logger:
-    def __init__(self, log_dir: str = 'logs', name: str = None, include_time: bool = False):
-        self.name = name if name else ''
-        self.time = datetime.now().strftime('_%y-%m-%d_%H%M%S') if include_time else ''
+    def __init__(self, log_dir: str = 'logs', model_name: str = None, tensorboard: bool = True):
+        """
+        Custom logger for PyTorch training loops.
+
+        Parameters
+        ----------
+        log_dir : str
+            Base directory of experiment logs. Default: 'logs'.
+        model_name : str
+            Experiment specific folder. Logs are stored in <log_dir>/<model_name>.
+        """
+        self.model_name = model_name if model_name else ''
+        self.log_dir = os.path.join(log_dir, self.model_name)
+
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir, exist_ok=True)
+
+        self.writer = SummaryWriter(self.log_dir) if tensorboard else Dummy
 
         self.metrics = []
         self.hparams = {}
@@ -32,9 +58,12 @@ class Logger:
 
         self.epoch = {}
 
-        self.log_dir = log_dir
-        if not os.path.exists(self.log_dir):
-            os.makedirs(self.log_dir, exist_ok=True)
+    @property
+    def tensorboard(self):
+        """
+        Returns tensorboard `SummaryWriter` instance.
+        """
+        return self.writer
 
     def log_hparams(self, params: dict):
         """
@@ -43,8 +72,8 @@ class Logger:
         Parameters
         ----------
         params : dict
-            Dictionary containing the hyperparameters as key-value pairs.
-            For example {'optimizer': 'Adam', 'lr': 1e-02}.
+            Dictionary containing the hyperparameters as key-value pairs. For
+            example {'optimizer': 'Adam', 'lr': 1e-02}.
         """
         self.hparams.update(params)
 
@@ -58,7 +87,7 @@ class Logger:
             Dictionary containing the metrics as key-value pairs. For example {'acc': 0.9, 'loss': 0.2}.
         step : int, optional
             Step number where metrics are to be recorded.
-        phase : str
+        phase : str, optional
             Current phase, e.g. 'train' or 'val' or 'epoch_end'.
         aggregate : bool
             If true, aggregates values into sum and average.
@@ -95,12 +124,19 @@ class Logger:
 
         self.epoch = {}
 
-    def save(self):
+    def save(self, name: str = None):
         """
         Save the hyperparameters and metrics to a file.
+
+        Parameters
+        ----------
+        name : str
+            Additional name for saving the metrics and hyperparameters.
         """
+        name = '_' + name if name else ''
+
         if self.metrics:
-            metrics_file_path = os.path.join(self.log_dir, 'metrics' + self.name + self.time + '.csv')
+            metrics_file_path = os.path.join(self.log_dir, 'metrics' + name + '.csv')
             last_m = {}
             for m in self.metrics:
                 last_m.update(m)
@@ -112,7 +148,7 @@ class Logger:
                 writer.writerows(self.metrics)
 
         if self.hparams:
-            hparams_file_path = os.path.join(self.log_dir, 'hparams' + self.name + self.time + '.yaml')
+            hparams_file_path = os.path.join(self.log_dir, 'hparams' + name + '.yaml')
 
             output = yaml.dump(self.hparams, Dumper=yaml.Dumper)
             with open(hparams_file_path, 'w') as file:
