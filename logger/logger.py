@@ -17,6 +17,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE."""
+
 import yaml
 import csv
 import os
@@ -50,25 +51,37 @@ class Dummy:
 
 
 class Logger:
-    def __init__(self, log_dir: str = 'logs', model_name: str = None, tensorboard: bool = True,
-                 include_time: bool = False):
+    def __init__(self, log_dir: str = 'logs', exp_name: str = None, tensorboard: bool = False,
+                 timestamp: bool = False):
         """
         Custom logger for PyTorch training loops.
+
+        Notes
+        ----------
+        The logs are stored in <log_dir>/<exp_name>/<timestamp> if `exp_name` is set and `timestamp` is true. For
+        example: './logs/model1/22-07-07_121028'. This folder then contains 'metrics.csv' and 'hparams.yaml'.
 
         Parameters
         ----------
         log_dir : str
             Base directory of experiment logs. Default: 'logs'.
-        model_name : str
-            Experiment specific folder. Logs are stored in <log_dir>/<model_name>.
+        exp_name : str
+            Experiment name to create specific folder. Logs are stored in <log_dir>/<exp_name>.
+        tensorboard : bool
+            If true, creates a `SummaryWriter` instance to write to tensorboard.
+        timestamp : bool
+            If true, makes a folder with the current time for the logs, e.g. <log_dir>/<exp_name>/<timestamp>. The
+            timestamp format is `y-m-d_HMS`, e.g. 22-07-07_121028.
+
         """
-        self.model_name = model_name if model_name else ''
-        self.log_dir = os.path.join(log_dir, self.model_name)
+        self.exp_name = exp_name if exp_name else ''
+        self.timestamp = datetime.now().strftime('%y-%m-%d_%H%M%S') if timestamp else ''
+        self.log_dir = os.path.join(log_dir, self.exp_name, self.timestamp)
 
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir, exist_ok=True)
 
-        self.writer = SummaryWriter(self.log_dir) if tensorboard else Dummy
+        self.writer = SummaryWriter(self.log_dir) if tensorboard else Dummy()
 
         self.metrics = []
         self.hparams = {}

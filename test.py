@@ -1,17 +1,21 @@
 from logger import Logger
+import os
 import torch
 import pandas as pd
 
 experiment_name = 'model1'
 
-logger = Logger('./logs', experiment_name,      # create log-folder `./logs/model1`
-                tensorboard=True)               # tensorboard SummaryWriter
+logger = Logger('./logs',
+                # create log-folder: './logs/model1/22-07-07_121028'
+                experiment_name, timestamp=True,
+                # include tensorboard SummaryWriter
+                tensorboard=True)
 
 logger.log_hparams({'lr': 1e-4,
                     'optimizer': 'Adam'})
 
 for epoch in range(2):
-    logger.init_epoch(epoch)        # initialize epoch to aggregate values
+    logger.init_epoch(epoch)     # initialize epoch to aggregate values
 
     # training
     for step in range(4):
@@ -31,4 +35,5 @@ for epoch in range(2):
 
 logger.save()
 
-print(pd.read_csv('logs/model1/metrics.csv').head(20))
+metrics_path = os.path.join(logger.log_dir, 'metrics.csv')
+print(pd.read_csv(metrics_path).head(20))

@@ -1,20 +1,30 @@
-# Custom CSV Logger
+# PyTorch CSV and Tensorboard Logger
+
+This is an implementation of a logger which includes tensorboard functionality for 
+keeping track of your `PyTorch` experiments. You can easily log all metrics during training and save
+them afterwards, aggregate average and sum over an epoch, and additionally wraps a `SummaryWriter`
+so that you can directly log to tensorboard.
 
 ## Usage
 
 ```python
-import torch
 from logger import Logger
+import torch
+
 experiment_name = 'model1'
 
-logger = Logger('./logs', experiment_name,      # create log-folder `./logs/model1`
-                tensorboard=True)               # tensorboard SummaryWriter
+logger = Logger('./logs',
+                # create log-folder: './logs/model1/22-07-07_121028'
+                experiment_name, timestamp=True,
+                # include tensorboard SummaryWriter
+                tensorboard=True)             
 
 logger.log_hparams({'lr': 1e-4,
                     'optimizer': 'Adam'})
 
 for epoch in range(2):
-    logger.init_epoch(epoch)        # initialize epoch to aggregate values
+    # initialize epoch to aggregate values
+    logger.init_epoch(epoch)     
 
     # training
     for step in range(4):
@@ -53,12 +63,5 @@ The output of the `logs/metrics.csv` file will look like this
 ```
 
 ## Todo
-- summary file writer
-  - write hparams
-  - write last epoch summary
-  - write name of log file
-  - signature (logfilepath)
-- integrate tensorboard
-- copyright issues
 - `setup.py` and packaging
 - set phase with logger.set_phase() ?
