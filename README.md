@@ -61,7 +61,3 @@ The output of the `logs/metrics.csv` file will look like this
 10      1    val       NaN       NaN    10  0.727887
 11      1    val       NaN       NaN    11  0.598616
 ```
-
-## Todo
-- `setup.py` and packaging
-- set phase with logger.set_phase() ?
