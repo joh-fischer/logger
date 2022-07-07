@@ -1,16 +1,33 @@
+"""MIT License Copyright (c) 2022 joh-fischer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE."""
 import yaml
 import csv
 import os
-
 import torch
+from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 
 
 class Aggregator:
     def __init__(self):
-        """
-        Aggregate sum and average.
-        """
+        """ Aggregate sum and average. """
         self.sum = 0.
         self.avg = 0.
         self.count = 0
@@ -22,6 +39,7 @@ class Aggregator:
 
 
 class Dummy:
+    """ Mock class for tensorboard `SummaryWriter` """
     def __init__(self, *args, **kwargs):
         pass
 
@@ -32,7 +50,8 @@ class Dummy:
 
 
 class Logger:
-    def __init__(self, log_dir: str = 'logs', model_name: str = None, tensorboard: bool = True):
+    def __init__(self, log_dir: str = 'logs', model_name: str = None, tensorboard: bool = True,
+                 include_time: bool = False):
         """
         Custom logger for PyTorch training loops.
 
@@ -60,9 +79,7 @@ class Logger:
 
     @property
     def tensorboard(self):
-        """
-        Returns tensorboard `SummaryWriter` instance.
-        """
+        """ Returns tensorboard `SummaryWriter` instance. """
         return self.writer
 
     def log_hparams(self, params: dict):
