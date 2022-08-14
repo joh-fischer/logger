@@ -50,7 +50,7 @@ class Dummy:
 
 
 class Logger:
-    def __init__(self, log_dir: str = 'logs', exp_name: str = None, timestamp: bool = False,
+    def __init__(self, log_dir: str = 'runs', exp_name: str = None, timestamp: bool = False,
                  tensorboard: bool = False):
         """
         Custom logger for PyTorch training loops.
@@ -63,7 +63,7 @@ class Logger:
         Parameters
         ----------
         log_dir : str
-            Base directory of experiment logs. Default: 'logs'.
+            Base directory of experiment logs. Default: 'runs'.
         exp_name : str
             Experiment name to create specific folder. Logs are stored in <log_dir>/<exp_name>.
         timestamp : bool
